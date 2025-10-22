@@ -1,0 +1,257 @@
+{
+  "info": {
+    "name": "Search Agregator - GET requests",
+    "_postman_id": "7f5a4b2e-5e9d-4a3b-9f6c-collection-local",
+    "description": "Postman collection for testing search endpoints against data loaded from buildDatas.xlsx (or the Google Sheets export). Use the baseUrl variable to point to your running service.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health - Actuator",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/actuator/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "actuator",
+            "health"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Search projects - by keyword (title/address/status/person)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/projects/search?q={{query}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "projects",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "{{query}}"
+            }
+          ]
+        },
+        "description": "Searches the indexed project cards using a simple text query. Matches may include title, address, status, responsible persons, or document link titles."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response is JSON array', function () {",
+              "  pm.expect(pm.response.json()).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Create Project",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"ЖК Солнечный\",\n  \"address\": \"г. Ижевск, ул. Солнечная, д. 45\",\n  \"startDate\": \"2024-01-01\",\n  \"endDate\": \"2026-12-31\",\n  \"status\": \"В процессе\",\n  \"responsiblePersons\": [\n    {\n      \"fio\": \"Иванов Иван Иванович\",\n      \"position\": \"ГИП\",\n      \"phone\": \"+79991234567\",\n      \"email\": \"ivanov@example.com\",\n      \"description\": \"\"\n    }\n  ],\n  \"documentLinks\": [\n    {\n      \"documentType\": \"Проектная документация\",\n      \"url\": \"https://example.com/docs\"\n    }\n  ],\n  \"indicators\": {\n    \"Площадь застройки, м2\": {\n      \"Секция №1\": \"320,89\",\n      \"Секция №2\": \"570,05\",\n      \"total\": \"890,94\"\n    },\n    \"Количество этажей, эт.\": {\n      \"Секция №1\": \"7\",\n      \"Секция №2\": \"9\",\n      \"total\": \"16\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/projects",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "projects"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Response has project data', function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData).to.have.property('id');",
+              "  pm.expect(jsonData).to.have.property('title');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get All Projects",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/projects",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "projects"]
+        }
+      }
+    },
+    {
+      "name": "Get Project by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "projects", "{{projectId}}"]
+        }
+      }
+    },
+    {
+      "name": "Delete Project by ID",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/projects/{{projectId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "projects", "{{projectId}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 204 (No Content)', function () {",
+              "  pm.response.to.have.status(204);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Examples / Samples",
+      "item": [
+        {
+          "name": "Search by address (e.g., Москва)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/search?q=Москва",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","projects","search"],
+              "query": [{"key":"q","value":"Москва"}]
+            }
+          }
+        },
+        {
+          "name": "Search by status (e.g., В работе)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/search?q=В%20работе",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","projects","search"],
+              "query": [{"key":"q","value":"В работе"}]
+            }
+          }
+        },
+        {
+          "name": "Search by responsible person (e.g., Иванов)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/search?q=Иванов",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","projects","search"],
+              "query": [{"key":"q","value":"Иванов"}]
+            }
+          }
+        },
+        {
+          "name": "Search by year in title/address (e.g., 2025)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/projects/search?q=2025",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","projects","search"],
+              "query": [{"key":"q","value":"2025"}]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "query",
+      "value": "Москва",
+      "type": "string"
+    },
+    {
+      "key": "projectId",
+      "value": "1",
+      "type": "string"
+    }
+  ]
+}
+
+

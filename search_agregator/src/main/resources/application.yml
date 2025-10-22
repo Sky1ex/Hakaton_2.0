@@ -1,0 +1,17 @@
+spring:
+  elasticsearch:
+    uris: ${SPRING_ELASTICSEARCH_URIS:http://localhost:9200}
+  application:
+    name: search_agregator
+
+management:
+  health:
+    elasticsearch:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+spreadsheet:
+  link: ${EXCEL_LINK}

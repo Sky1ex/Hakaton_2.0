@@ -1,0 +1,68 @@
+services:
+  # Elasticsearch для поиска
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Java Spring Boot Backend
+  backend:
+    build:
+      context: ./search_agregator
+      dockerfile: Dockerfile
+    container_name: search_agregator_backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
+      - EXCEL_LINK=https://docs.google.com/spreadsheets/d/1xSLI1rYUwKQ1j9BUg0yi2qn67Q-IClDQ/export?format=xlsx
+      - ELASTICSEARCH_HEAP_SIZE=512m
+    ports:
+      - "8080:8080"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./test
+      dockerfile: Dockerfile
+    container_name: react_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  elasticsearch_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

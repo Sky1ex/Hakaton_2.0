@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Светлая тема - белый, серый, оранжевый */
+    --background: 0 0% 100%; /* Белый фон */
+    --foreground: 0 0% 15%; /* Темно-серый текст */
+    --card: 0 0% 100%; /* Белые карточки */
+    --card-foreground: 0 0% 15%; /* Темно-серый текст на карточках */
+    --popover: 0 0% 100%; /* Белые попапы */
+    --popover-foreground: 0 0% 15%; /* Темно-серый текст в попапах */
+    --primary: 24 100% 50%; /* Оранжевый основной цвет #ff4800 */
+    --primary-foreground: 0 0% 100%; /* Белый текст на оранжевом */
+    --secondary: 0 0% 95%; /* Светло-серый вторичный */
+    --secondary-foreground: 0 0% 25%; /* Темно-серый текст на вторичном */
+    --muted: 0 0% 95%; /* Светло-серый приглушенный */
+    --muted-foreground: 0 0% 50%; /* Серый приглушенный текст */
+    --accent: 0 0% 95%; /* Светло-серый акцент */
+    --accent-foreground: 0 0% 25%; /* Темно-серый текст на акценте */
+    --destructive: 24 100% 50%; /* Оранжевый для деструктивных действий */
+    --destructive-foreground: 0 0% 100%; /* Белый текст */
+    --border: 0 0% 88%; /* Светло-серые границы */
+    --input: 0 0% 100%; /* Белые поля ввода */
+    --ring: 24 100% 50%; /* Оранжевое кольцо фокуса */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Темная тема - черный, серый, оранжевый */
+    --background: 0 0% 5%; /* Черный фон */
+    --foreground: 0 0% 90%; /* Светло-серый текст */
+    --card: 0 0% 8%; /* Темно-серые карточки */
+    --card-foreground: 0 0% 90%; /* Светло-серый текст на карточках */
+    --popover: 0 0% 8%; /* Темно-серые попапы */
+    --popover-foreground: 0 0% 90%; /* Светло-серый текст в попапах */
+    --primary: 24 100% 50%; /* Оранжевый основной цвет #ff4800 */
+    --primary-foreground: 0 0% 5%; /* Черный текст на оранжевом */
+    --secondary: 0 0% 12%; /* Темно-серый вторичный */
+    --secondary-foreground: 0 0% 80%; /* Светло-серый текст на вторичном */
+    --muted: 0 0% 12%; /* Темно-серый приглушенный */
+    --muted-foreground: 0 0% 65%; /* Серый приглушенный текст */
+    --accent: 0 0% 12%; /* Темно-серый акцент */
+    --accent-foreground: 0 0% 80%; /* Светло-серый текст на акценте */
+    --destructive: 24 100% 50%; /* Оранжевый для деструктивных действий */
+    --destructive-foreground: 0 0% 5%; /* Черный текст */
+    --border: 0 0% 18%; /* Темно-серые границы */
+    --input: 0 0% 8%; /* Темно-серые поля ввода */
+    --ring: 24 100% 50%; /* Оранжевое кольцо фокуса */
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  html, body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    overflow-x: hidden; /* Убираем горизонтальный скролл */
+  }
+  
+  /* Стили для скроллируемого контейнера - только на десктопе */
+  @media (min-width: 1024px) {
+    .scroll-container {
+      scrollbar-width: thin;
+      scrollbar-color: hsl(var(--muted-foreground)) transparent;
+      overflow-x: hidden; /* Убираем горизонтальный скролл */
+    }
+    
+    .scroll-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .scroll-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .scroll-container::-webkit-scrollbar-thumb {
+      background-color: hsl(var(--muted-foreground));
+      border-radius: 4px;
+    }
+    
+    .scroll-container::-webkit-scrollbar-thumb:hover {
+      background-color: hsl(var(--foreground));
+    }
+  }
+}
